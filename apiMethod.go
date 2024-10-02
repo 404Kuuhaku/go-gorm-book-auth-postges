@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -62,7 +61,6 @@ func updateBookHandler(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
-	// return c.JSON(book)
 	return c.JSON(fiber.Map{
 		"message": "Update book successful!",
 	})
@@ -90,12 +88,10 @@ func deleteBookHandler(c *fiber.Ctx) error {
 
 func searchBookHandler(c *fiber.Ctx) error {
 	bookName := c.Query("name")
-	fmt.Println("Searching for book with name:", bookName)
 
 	book, err := searchBook(db, bookName)
 
 	if err != nil {
-		fmt.Println("Error:", err)
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
 

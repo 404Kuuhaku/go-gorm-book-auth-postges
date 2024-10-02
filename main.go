@@ -52,39 +52,6 @@ func main() {
 	db = SetupDatabase()
 	db.AutoMigrate(&Book{})
 
-	// // GET BOOK
-	// currentBook := getBook(db, 1)
-	// fmt.Println(currentBook)
-
-	// // SEARCH BOOK
-	// currentBook := searchBook(db, "updated!!")
-	// fmt.Println(currentBook)
-
-	// // SEARCH BOOKS
-	// currentBook := searchBooks(db, "updated!!", "price desc")
-	// for _, book := range currentBook {
-	// 	fmt.Println(book.ID, book.Name, book.Price)
-	// }
-
-	// // CREATE BOOK
-	// newBook := &Book{
-	// 	Name:        "updated!!",
-	// 	Author:      "mm",
-	// 	Description: "hello world!",
-	// 	Price:       999,
-	// 	Publisher:   "nonono",
-	// }
-	// creatBook(db, newBook)
-
-	// // UPDATE BOOK
-	// currentBook := getBook(db, 1)
-	// currentBook.Name = "updated!!"
-	// currentBook.Price = 111
-	// updateBook(db, currentBook)
-
-	// // DELETE BOOK
-	// deleteBook(db, 1)
-
 	app := fiber.New()
 	app.Get("/books", getAllBooksHandler)
 	app.Get("/book/:id", getBookHandler)

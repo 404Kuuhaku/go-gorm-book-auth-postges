@@ -44,13 +44,10 @@ func searchBook(db *gorm.DB, bookName string) (*Book, error) {
 	var book Book
 	result := db.Where("name = ?", bookName).First(&book)
 	if result.Error != nil {
-		// log.Fatalf("Error search book : %v", result.Error)
-		fmt.Println("Database error:", result.Error)
 		return nil, result.Error
 	}
 
 	fmt.Println("Search book successful!")
-	fmt.Println("Found book:", book)
 
 	return &book, nil
 
@@ -60,11 +57,10 @@ func searchBooks(db *gorm.DB, bookName string, order string) ([]Book, error) {
 	var book []Book
 	result := db.Where("name = ?", bookName).Order(order).Find(&book)
 	if result.Error != nil {
-		// log.Fatalf("Error search book : %v", result.Error)
 		return nil, result.Error
 	}
 
-	fmt.Println("Search book successful!")
+	fmt.Println("Search books successful!")
 
 	return book, nil
 
@@ -74,11 +70,9 @@ func creatBook(db *gorm.DB, book *Book) error {
 	result := db.Create(book)
 
 	if result.Error != nil {
-		// log.Fatalf("Error creating book : %v", result.Error)
 		return result.Error
 	}
 
-	// fmt.Println("Create book successful!")
 	return nil
 
 }
@@ -88,11 +82,9 @@ func updateBook(db *gorm.DB, book *Book) error {
 	result := db.Model(&book).Updates(book) //use this instead Save becuse it' did not change Creat At Field
 
 	if result.Error != nil {
-		// log.Fatalf("Error update book : %v", result.Error)
 		return result.Error
 	}
 
-	// fmt.Println("Update book successful!")
 	return nil
 
 }
@@ -103,11 +95,9 @@ func deleteBook(db *gorm.DB, id uint) error {
 	// result := db.Unscoped().Delete(&book, id) //HARD DELETE
 
 	if result.Error != nil {
-		// log.Fatalf("Error delete book : %v", result.Error)
 		return result.Error
 	}
 
-	// fmt.Println("Delete book successful!")
 	return nil
 
 }
