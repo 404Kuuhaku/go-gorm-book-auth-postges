@@ -40,29 +40,33 @@ func getBook(db *gorm.DB, id uint) *Book {
 	return &book
 }
 
-func searchBook(db *gorm.DB, bookName string) *Book {
+func searchBook(db *gorm.DB, bookName string) (*Book, error) {
 	var book Book
 	result := db.Where("name = ?", bookName).First(&book)
 	if result.Error != nil {
-		log.Fatalf("Error search book : %v", result.Error)
+		// log.Fatalf("Error search book : %v", result.Error)
+		fmt.Println("Database error:", result.Error)
+		return nil, result.Error
 	}
 
 	fmt.Println("Search book successful!")
+	fmt.Println("Found book:", book)
 
-	return &book
+	return &book, nil
 
 }
 
-func searchBooks(db *gorm.DB, bookName string, order string) []Book {
+func searchBooks(db *gorm.DB, bookName string, order string) ([]Book, error) {
 	var book []Book
 	result := db.Where("name = ?", bookName).Order(order).Find(&book)
 	if result.Error != nil {
-		log.Fatalf("Error search book : %v", result.Error)
+		// log.Fatalf("Error search book : %v", result.Error)
+		return nil, result.Error
 	}
 
 	fmt.Println("Search book successful!")
 
-	return book
+	return book, nil
 
 }
 

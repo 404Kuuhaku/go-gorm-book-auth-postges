@@ -88,6 +88,8 @@ func main() {
 	app := fiber.New()
 	app.Get("/books", getAllBooksHandler)
 	app.Get("/book/:id", getBookHandler)
+	app.Get("/search", searchBookHandler)
+	app.Get("/searchs", searchBooksHandler)
 	app.Post("/book", createBookHandler)
 	app.Put("/book/:id", updateBookHandler)
 	app.Delete("/book/:id", deleteBookHandler)
