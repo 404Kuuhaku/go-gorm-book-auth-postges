@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,6 +15,7 @@ import (
 )
 
 var db *gorm.DB
+var jwtSecretKey string = os.Getenv("JWT_SECRETKEY")
 
 func SetupDatabase() *gorm.DB {
 	if err := godotenv.Load(); err != nil {
@@ -48,17 +50,54 @@ func SetupDatabase() *gorm.DB {
 	return db
 }
 
+func authRequired(c *fiber.Ctx) error {
+	cookie := c.Cookies("jwt")
+
+	// token, err := jwt.ParseWithClaims(cookie, &jwt.MapClaims{}, func(t *jwt.Token) (interface{}, error) {
+	// 	return []byte(jwtSecretKey), nil
+	// })
+
+	token, err := jwt.ParseWithClaims(cookie, &jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(jwtSecretKey), nil
+	})
+
+	if err != nil || !token.Valid {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+
+	claim := token.Claims.(*jwt.MapClaims)
+
+	fmt.Println(claim)
+
+	return c.Next()
+
+}
+
 func main() {
 	db = SetupDatabase()
-	db.AutoMigrate(&Book{})
+	db.AutoMigrate(&Book{}, &User{})
 
 	app := fiber.New()
-	app.Get("/books", getAllBooksHandler)
-	app.Get("/book/:id", getBookHandler)
-	app.Get("/search", searchBookHandler)
-	app.Get("/searchs", searchBooksHandler)
-	app.Post("/book", createBookHandler)
-	app.Put("/book/:id", updateBookHandler)
-	app.Delete("/book/:id", deleteBookHandler)
+	// BOOK API
+	apiBook := app.Group("/book-api", authRequired)
+	apiBook.Get("/books", getAllBooksHandler)
+	apiBook.Get("/book/:id", getBookHandler)
+	apiBook.Get("/search", searchBookHandler)
+	apiBook.Get("/searchs", searchBooksHandler)
+	apiBook.Post("/book", createBookHandler)
+	apiBook.Put("/book/:id", updateBookHandler)
+	apiBook.Delete("/book/:id", deleteBookHandler)
+
+	// app.Get("/books", getAllBooksHandler)
+	// app.Get("/book/:id", getBookHandler)
+	// app.Get("/search", searchBookHandler)
+	// app.Get("/searchs", searchBooksHandler)
+	// app.Post("/book", createBookHandler)
+	// app.Put("/book/:id", updateBookHandler)
+	// app.Delete("/book/:id", deleteBookHandler)
+
+	// USER API
+	app.Post("/register", createUserHandler)
+	app.Post("/login", loginUserHandler)
 	app.Listen(":8080")
 }
