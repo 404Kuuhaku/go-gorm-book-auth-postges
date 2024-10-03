@@ -75,18 +75,32 @@ func authRequired(c *fiber.Ctx) error {
 
 func main() {
 	db = SetupDatabase()
-	db.AutoMigrate(&Book{}, &User{})
+	db.AutoMigrate(&Book{}, &Publisher{}, &Author{}, &AuthorBook{}, &User{})
 
 	app := fiber.New()
-	// BOOK API
-	apiBook := app.Group("/book-api", authRequired)
-	apiBook.Get("/books", getAllBooksHandler)
-	apiBook.Get("/book/:id", getBookHandler)
-	apiBook.Get("/search", searchBookHandler)
-	apiBook.Get("/searchs", searchBooksHandler)
-	apiBook.Post("/book", createBookHandler)
-	apiBook.Put("/book/:id", updateBookHandler)
-	apiBook.Delete("/book/:id", deleteBookHandler)
+	// PUBLISHER API
+	apiPublisher := app.Group("/publisher-api", authRequired)
+	apiPublisher.Get("/publishers", getAllPublishersHandler)
+	apiPublisher.Post("/publisher", createPublisherHandler)
+	apiPublisher.Put("/publisher/:id", updatePublisherHandler)
+	apiPublisher.Delete("/publisher/:id", deletePublisherHandler)
+
+	// AUTHOR API
+	apiAuthor := app.Group("/author-api", authRequired)
+	apiAuthor.Get("/authors", getAllAuthorsHandler)
+	apiAuthor.Post("/author", createAuthorHandler)
+	apiAuthor.Put("/author/:id", updateAuthorHandler)
+	apiAuthor.Delete("/author/:id", deleteAuthorHandler)
+
+	// // BOOK API
+	// apiBook := app.Group("/book-api", authRequired)
+	// apiBook.Get("/books", getAllBooksHandler)
+	// apiBook.Get("/book/:id", getBookHandler)
+	// apiBook.Get("/search", searchBookHandler)
+	// apiBook.Get("/searchs", searchBooksHandler)
+	// apiBook.Post("/book", createBookHandler)
+	// apiBook.Put("/book/:id", updateBookHandler)
+	// apiBook.Delete("/book/:id", deleteBookHandler)
 
 	// app.Get("/books", getAllBooksHandler)
 	// app.Get("/book/:id", getBookHandler)
